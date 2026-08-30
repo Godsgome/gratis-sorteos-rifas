@@ -1,11 +1,10 @@
-// api/db.js - Shared MongoDB connection (lazy)
 import { MongoClient } from 'mongodb';
 
 const uri = process.env.MONGODB_URI;
 let client;
 let db;
 
-async function getDb() {
+export async function getDb() {
     if (!db) {
         client = new MongoClient(uri);
         await client.connect();
@@ -13,5 +12,3 @@ async function getDb() {
     }
     return db;
 }
-
-export default { getDb };
