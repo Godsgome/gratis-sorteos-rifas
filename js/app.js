@@ -1,8 +1,7 @@
 // js/app.js
 const API_URL = 'https://gratis-sorteos-rifas.vercel.app';
 const WALLET_ADDRESS = '0xA985Fac65c391b7685BB25D0aEF80EE228d8aD1D';
-const WALLET_URI = `ethereum:${WALLET_ADDRESS}@137`;
-const QR_API = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(WALLET_URI)}`;
+const QR_API = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(WALLET_ADDRESS)}`;
 
 let visitorId = null;
 let isPointA = false;

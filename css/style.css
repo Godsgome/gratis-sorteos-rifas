@@ -68,15 +68,21 @@ button {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: #fff;
     border: none;
-    padding: 12px 28px;
+    padding: 14px 32px;
     border-radius: 8px;
     font-size: 16px;
     cursor: pointer;
     transition: transform 0.2s, opacity 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 button:hover {
     transform: translateY(-1px);
+}
+
+button:active {
+    transform: scale(0.97);
 }
 
 button:disabled {
@@ -105,12 +111,14 @@ button:disabled {
     word-break: break-all;
     text-align: left;
     flex: 1;
+    min-width: 0;
 }
 
 .code-box button {
-    font-size: 12px;
-    padding: 6px 14px;
+    font-size: 13px;
+    padding: 8px 16px;
     flex-shrink: 0;
+    min-height: 36px;
 }
 
 .code-box.reward span {
@@ -119,13 +127,15 @@ button:disabled {
 
 .code-box.wallet {
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .wallet-addr {
-    font-size: 13px !important;
+    font-size: 11px !important;
     letter-spacing: 0 !important;
     color: rgba(255, 255, 255, 0.8);
+    word-break: break-all;
+    line-height: 1.4;
 }
 
 .wallet-label {
@@ -134,8 +144,8 @@ button:disabled {
 }
 
 .donation-qr {
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     border-radius: 12px;
     background: #fff;
     padding: 8px;
@@ -143,20 +153,29 @@ button:disabled {
     display: block;
 }
 
+.donation-section {
+    margin-bottom: 20px;
+}
+
 .btn-link {
     display: inline-block;
     background: linear-gradient(135deg, #f093fb, #f5576c);
     color: #fff;
     text-decoration: none;
-    padding: 12px 28px;
+    padding: 14px 32px;
     border-radius: 8px;
     font-size: 16px;
     margin-top: 12px;
     transition: transform 0.2s;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .btn-link:hover {
     transform: translateY(-1px);
+}
+
+.btn-link:active {
+    transform: scale(0.97);
 }
 
 input[type="text"] {
@@ -172,6 +191,7 @@ input[type="text"] {
     font-family: monospace;
     outline: none;
     transition: border-color 0.2s;
+    -webkit-appearance: none;
 }
 
 input[type="text"]:focus {
@@ -196,7 +216,7 @@ input[type="text"]::placeholder {
     border: 1px solid rgba(74, 222, 128, 0.3);
 }
 
-#error {
+#msg.error {
     background: rgba(248, 113, 113, 0.15);
     color: #f87171;
     border: 1px solid rgba(248, 113, 113, 0.3);
@@ -207,15 +227,58 @@ input[type="text"]::placeholder {
 }
 
 @media (max-width: 480px) {
-    .container {
-        padding: 24px;
+    body {
+        padding: 20px 12px;
     }
-    
+
+    .container {
+        padding: 24px 16px;
+    }
+
     h1 {
         font-size: 20px;
     }
-    
+
+    h2 {
+        font-size: 16px;
+    }
+
+    .donation-qr {
+        width: 160px;
+        height: 160px;
+    }
+
     .code-box span {
         font-size: 20px;
+    }
+
+    .wallet-addr {
+        font-size: 10px !important;
+    }
+
+    input[type="text"] {
+        font-size: 20px;
+        width: 120px;
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        padding: 20px 12px;
+    }
+
+    .donation-qr {
+        width: 140px;
+        height: 140px;
+    }
+
+    button {
+        padding: 12px 24px;
+        font-size: 15px;
+    }
+
+    .code-box button {
+        padding: 8px 12px;
+        font-size: 12px;
     }
 }
