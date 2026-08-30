@@ -20,7 +20,6 @@ async function initFingerprint() {
         visitorId = result.visitorId;
         return true;
     } catch (err) {
-        console.error('Fingerprint error:', err);
         return false;
     }
 }
