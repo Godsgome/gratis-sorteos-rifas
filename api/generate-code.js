@@ -1,4 +1,3 @@
-// api/generate-code.js - Generate a new code
 import { getDb } from './db.js';
 
 export default async function handler(req, res) {
@@ -18,7 +17,6 @@ export default async function handler(req, res) {
         }
 
         const existing = await db.collection('codes').findOne({ visitorId, estado: 'generado' });
-
         if (existing) {
             return res.status(200).json({
                 codeA: existing.codigoA,
@@ -28,7 +26,6 @@ export default async function handler(req, res) {
         }
 
         const shorteners = await db.collection('shorteners').find({ type: 'dou-acor' }).toArray();
-
         if (shorteners.length === 0) {
             return res.status(500).json({ error: 'No shorteners available' });
         }
@@ -51,7 +48,6 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-        console.error('Generate code error:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: error.message || 'Internal server error' });
     }
 }

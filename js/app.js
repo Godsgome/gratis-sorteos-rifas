@@ -3,7 +3,7 @@
 
 // IMPORTANT: This is your Vercel deployment URL
 // Change this after you deploy to Vercel
-const API_URL = 'https://rifas-vercel.vercel.app';
+const API_URL = 'https://gratis-sorteos-rifas.vercel.app';
 
 // State
 let visitorId = null;
