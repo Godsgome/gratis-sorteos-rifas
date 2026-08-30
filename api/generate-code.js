@@ -42,7 +42,7 @@ export default async function handler(req, res) {
         });
 
         return res.status(200).json({
-            codeA,
+            codeA: codigoA,
             paginaB_id: shortener.paginaB_id,
             linkAcortado: shortener.linkAcortado
         });
