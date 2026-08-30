@@ -1,6 +1,4 @@
-// js/app.js - Main application logic
-// Works for both Punto A (index.html) and Punto B (b.html)
-
+// js/app.js
 const API_URL = 'https://gratis-sorteos-rifas.vercel.app';
 const WALLET_ADDRESS = '0xA985Fac65c391b7685BB25D0aEF80EE228d8aD1D';
 const WALLET_URI = `ethereum:${WALLET_ADDRESS}@137`;
@@ -21,7 +19,6 @@ async function initFingerprint() {
         const fp = await FingerprintJS.load({ monitoring: false });
         const result = await fp.get();
         visitorId = result.visitorId;
-        console.log('Fingerprint:', visitorId);
         return true;
     } catch (err) {
         console.error('Fingerprint error:', err);
@@ -47,18 +44,9 @@ function showMsg(text, type = 'info') {
     }
 }
 
-function setQR() {
-    const qrImg = document.getElementById('donation-qr');
-    if (qrImg) qrImg.src = QR_API;
-
-    const walletEl = document.getElementById('wallet-address');
-    if (walletEl) walletEl.textContent = WALLET_ADDRESS;
-}
-
-function copyWallet() {
-    navigator.clipboard.writeText(WALLET_ADDRESS)
-        .then(() => showMsg('Dirección copiada.', 'success'))
-        .catch(() => showMsg('Error al copiar.', 'error'));
+function hideMsg() {
+    const msgEl = document.getElementById('msg');
+    if (msgEl) msgEl.classList.add('hidden');
 }
 
 // ===== PUNTO A =====
@@ -69,20 +57,32 @@ async function initPuntoA() {
     const copyBtn = document.getElementById('copyBtn');
     const linkB = document.getElementById('linkB');
     const fpStatus = document.getElementById('fingerprint-status');
-    const donationSection = document.getElementById('donation-section');
+    const qrImg = document.getElementById('donation-qr');
+    const walletEl = document.getElementById('wallet-address');
+    const copyWalletBtn = document.getElementById('copyWalletBtn');
 
+    // QR + Wallet
+    qrImg.src = QR_API;
+    walletEl.textContent = WALLET_ADDRESS;
+
+    copyWalletBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(WALLET_ADDRESS)
+            .then(() => showMsg('Dirección copiada.', 'success'))
+            .catch(() => showMsg('Error al copiar.', 'error'));
+    });
+
+    // Fingerprint
     const fpOk = await initFingerprint();
     if (!fpOk) {
         fpStatus.innerHTML = 'Error al identificar navegador';
         return;
     }
-
     fpStatus.innerHTML = 'Identificado: ' + visitorId.substring(0, 16) + '...';
     generateBtn.disabled = false;
-    donationSection.classList.remove('hidden');
-    setQR();
 
+    // Generate code
     generateBtn.addEventListener('click', async () => {
+        hideMsg();
         generateBtn.disabled = true;
         generateBtn.textContent = 'Generando...';
 
@@ -106,6 +106,7 @@ async function initPuntoA() {
         generateBtn.disabled = false;
     });
 
+    // Copy code
     copyBtn.addEventListener('click', () => {
         navigator.clipboard.writeText(codeEl.textContent)
             .then(() => showMsg('Código copiado.', 'success'))
@@ -131,7 +132,7 @@ async function initPuntoB() {
     if (!match) {
         loading.classList.add('hidden');
         accessDenied.classList.remove('hidden');
-        showMsg('URL inválida. Falta el número de página.', 'error');
+        showMsg('URL inválida.', 'error');
         return;
     }
 
@@ -158,6 +159,7 @@ async function initPuntoB() {
 
         codeForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            hideMsg();
             const code = codeInput.value.trim();
 
             if (code.length !== 3) {

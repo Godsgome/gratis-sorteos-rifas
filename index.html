@@ -10,12 +10,20 @@
 <body>
     <div class="container">
         <h1>Generador de Códigos</h1>
-        <p>Presiona el botón para generar tu código único.</p>
         
         <div id="fingerprint-status" class="status">
             <span class="spinner"></span> Identificando navegador...
         </div>
         
+        <div class="donation-section">
+            <img id="donation-qr" src="" alt="QR Donación" class="donation-qr">
+            <p class="wallet-label">Envía en la red Polygon:</p>
+            <div class="code-box wallet">
+                <span id="wallet-address" class="wallet-addr"></span>
+                <button id="copyWalletBtn">Copiar</button>
+            </div>
+        </div>
+
         <button id="generateBtn" disabled>Generar Código</button>
         
         <div id="result" class="hidden">
@@ -25,16 +33,6 @@
                 <button id="copyBtn">Copiar</button>
             </div>
             <a id="linkB" href="#" target="_blank" class="btn-link">Ir al Punto B</a>
-        </div>
-
-        <div id="donation-section" class="hidden">
-            <h2>Donaciones (Polygon)</h2>
-            <img id="donation-qr" src="" alt="QR Donación" class="donation-qr">
-            <p class="wallet-label">Envía cualquier moneda en la red Polygon:</p>
-            <div class="code-box wallet">
-                <span id="wallet-address" class="wallet-addr"></span>
-                <button onclick="copyWallet()">Copiar</button>
-            </div>
         </div>
         
         <div id="msg" class="hidden"></div>
