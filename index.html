@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rifas Gratis - Generador de Códigos</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@5/dist/fp.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Generador de Códigos</h1>
+        <p>Presiona el botón para generar tu código único.</p>
+        
+        <div id="fingerprint-status" class="status">
+            <span class="spinner"></span> Identificando navegador...
+        </div>
+        
+        <button id="generateBtn" disabled>Generar Código</button>
+        
+        <div id="result" class="hidden">
+            <h2>Tu Código</h2>
+            <div class="code-box">
+                <span id="code"></span>
+                <button id="copyBtn">Copiar</button>
+            </div>
+            <a id="linkB" href="#" target="_blank" class="btn-link">Ir al Punto B</a>
+        </div>
+        
+        <div id="msg" class="hidden"></div>
+    </div>
+    
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rifas Gratis - Valida tu Código</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@5/dist/fp.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Valida tu Código</h1>
+        
+        <div id="loading" class="status">
+            <span class="spinner"></span> Verificando acceso...
+        </div>
+        
+        <div id="access-denied" class="hidden">
+            <h2>Acceso No Autorizado</h2>
+            <p>No tienes un código asignado. Regresa al Punto A para generar uno.</p>
+            <a id="linkA" href="#" class="btn-link">Ir al Punto A</a>
+        </div>
+        
+        <div id="validation-form" class="hidden">
+            <p>Introduce tu código de 3 dígitos:</p>
+            <form id="codeForm">
+                <input type="text" id="codeInput" maxlength="3" placeholder="XXX" required>
+                <button type="submit">Validar</button>
+            </form>
+        </div>
+        
+        <div id="reward" class="hidden">
+            <h2>¡Felicidades!</h2>
+            <p>Tu código de recompensa:</p>
+            <div class="code-box reward">
+                <span id="rewardCode"></span>
+                <button id="copyRewardBtn">Copiar</button>
+            </div>
+        </div>
+        
+        <div id="msg" class="hidden"></div>
+    </div>
+    
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
