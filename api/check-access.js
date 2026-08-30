@@ -13,7 +13,7 @@ export default async function handler(req, res) {
         const { visitorId, paginaB_id } = req.body;
 
         if (!visitorId || !paginaB_id) {
-            return res.status(400).json({ error: 'Missing required fields' });
+            return res.status(400).json({ error: 'Faltan campos requeridos' });
         }
 
         const code = await db.collection('codes').findOne({
@@ -25,7 +25,6 @@ export default async function handler(req, res) {
         return res.status(200).json({ hasAccess: !!code });
 
     } catch (error) {
-        console.error('Check access error:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: error.message || 'Internal server error' });
     }
 }

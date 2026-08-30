@@ -16,7 +16,22 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'visitorId required' });
         }
 
-        const existing = await db.collection('codes').findOne({ visitorId, estado: 'generado' });
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+
+        // Expire old codes from previous days
+        await db.collection('codes').updateMany(
+            { visitorId, estado: 'generado', createdAt: { $lt: todayStart } },
+            { $set: { estado: 'expirado' } }
+        );
+
+        // Check if user already has a code from today (1 code per day)
+        const existing = await db.collection('codes').findOne({
+            visitorId,
+            estado: 'generado',
+            createdAt: { $gte: todayStart }
+        });
+
         if (existing) {
             return res.status(200).json({
                 codeA: existing.codigoA,
@@ -25,16 +40,31 @@ export default async function handler(req, res) {
             });
         }
 
-        const shorteners = await db.collection('shorteners').find({ type: 'dou-acor' }).toArray();
-        if (shorteners.length === 0) {
-            return res.status(500).json({ error: 'No shorteners available' });
+        // Check if user already used a code today
+        const usedToday = await db.collection('codes').findOne({
+            visitorId,
+            estado: 'utilizado',
+            usedAt: { $gte: todayStart }
+        });
+
+        if (usedToday) {
+            return res.status(429).json({ error: 'Ya generaste tu código hoy. Vuelve mañana.' });
         }
 
+        // Get available shorteners
+        const shorteners = await db.collection('shorteners').find({ type: 'dou-acor' }).toArray();
+        if (shorteners.length === 0) {
+            return res.status(500).json({ error: 'No hay acortadores disponibles' });
+        }
+
+        // Pick random shortener
         const shortener = shorteners[Math.floor(Math.random() * shorteners.length)];
         const codigoA = String(Math.floor(100 + Math.random() * 900));
 
+        // Save to database
         await db.collection('codes').insertOne({
-            codigoA, visitorId,
+            codigoA,
+            visitorId,
             paginaB_id: shortener.paginaB_id,
             estado: 'generado',
             linkAcortado: shortener.linkAcortado,

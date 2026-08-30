@@ -1,23 +1,21 @@
 // js/app.js - Main application logic
 // Works for both Punto A (index.html) and Punto B (b.html)
 
-// IMPORTANT: This is your Vercel deployment URL
-// Change this after you deploy to Vercel
 const API_URL = 'https://gratis-sorteos-rifas.vercel.app';
+const WALLET_ADDRESS = '0xA985Fac65c391b7685BB25D0aEF80EE228d8aD1D';
+const WALLET_URI = `ethereum:${WALLET_ADDRESS}@137?value=1.0e18`;
+const QR_API = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(WALLET_URI)}`;
 
-// State
 let visitorId = null;
 let isPointA = false;
 let isPointB = false;
 
-// Detect which page we're on
 if (window.location.pathname.endsWith('b.html') || window.location.hash.includes('pag=')) {
     isPointB = true;
 } else {
     isPointA = true;
 }
 
-// Initialize FingerprintJS
 async function initFingerprint() {
     try {
         const fp = await FingerprintJS.load({ monitoring: false });
@@ -31,7 +29,6 @@ async function initFingerprint() {
     }
 }
 
-// API helper
 async function apiCall(endpoint, data) {
     const response = await fetch(`${API_URL}/api/${endpoint}`, {
         method: 'POST',
@@ -41,7 +38,6 @@ async function apiCall(endpoint, data) {
     return response.json();
 }
 
-// Show message
 function showMsg(text, type = 'info') {
     const msgEl = document.getElementById('msg');
     if (msgEl) {
@@ -51,7 +47,21 @@ function showMsg(text, type = 'info') {
     }
 }
 
-// ===== PUNTO A LOGIC =====
+function setQR() {
+    const qrImg = document.getElementById('donation-qr');
+    if (qrImg) qrImg.src = QR_API;
+
+    const walletEl = document.getElementById('wallet-address');
+    if (walletEl) walletEl.textContent = WALLET_ADDRESS;
+}
+
+function copyWallet() {
+    navigator.clipboard.writeText(WALLET_ADDRESS)
+        .then(() => showMsg('Dirección copiada.', 'success'))
+        .catch(() => showMsg('Error al copiar.', 'error'));
+}
+
+// ===== PUNTO A =====
 async function initPuntoA() {
     const generateBtn = document.getElementById('generateBtn');
     const resultDiv = document.getElementById('result');
@@ -59,8 +69,8 @@ async function initPuntoA() {
     const copyBtn = document.getElementById('copyBtn');
     const linkB = document.getElementById('linkB');
     const fpStatus = document.getElementById('fingerprint-status');
+    const donationSection = document.getElementById('donation-section');
 
-    // Init fingerprint
     const fpOk = await initFingerprint();
     if (!fpOk) {
         fpStatus.innerHTML = 'Error al identificar navegador';
@@ -69,8 +79,9 @@ async function initPuntoA() {
 
     fpStatus.innerHTML = 'Identificado: ' + visitorId.substring(0, 16) + '...';
     generateBtn.disabled = false;
+    donationSection.classList.remove('hidden');
+    setQR();
 
-    // Generate code
     generateBtn.addEventListener('click', async () => {
         generateBtn.disabled = true;
         generateBtn.textContent = 'Generando...';
@@ -82,7 +93,7 @@ async function initPuntoA() {
                 showMsg(data.error, 'error');
             } else {
                 codeEl.textContent = data.codeA;
-                linkB.href = `b.html#pag=${data.paginaB_id}`;
+                linkB.href = data.linkAcortado;
                 resultDiv.classList.remove('hidden');
                 showMsg('Código generado!', 'success');
             }
@@ -95,7 +106,6 @@ async function initPuntoA() {
         generateBtn.disabled = false;
     });
 
-    // Copy code
     copyBtn.addEventListener('click', () => {
         navigator.clipboard.writeText(codeEl.textContent)
             .then(() => showMsg('Código copiado.', 'success'))
@@ -103,7 +113,7 @@ async function initPuntoA() {
     });
 }
 
-// ===== PUNTO B LOGIC =====
+// ===== PUNTO B =====
 async function initPuntoB() {
     const loading = document.getElementById('loading');
     const accessDenied = document.getElementById('access-denied');
@@ -115,7 +125,6 @@ async function initPuntoB() {
     const copyRewardBtn = document.getElementById('copyRewardBtn');
     const linkA = document.getElementById('linkA');
 
-    // Get page from hash
     const hash = window.location.hash;
     const match = hash.match(/pag=(\d+)/);
     
@@ -129,14 +138,12 @@ async function initPuntoB() {
     const paginaB_id = match[1];
     linkA.href = 'index.html';
 
-    // Init fingerprint
     const fpOk = await initFingerprint();
     if (!fpOk) {
         loading.innerHTML = 'Error al identificar navegador';
         return;
     }
 
-    // Check access
     try {
         const data = await apiCall('check-access', { visitorId, paginaB_id });
 
@@ -147,10 +154,8 @@ async function initPuntoB() {
             return;
         }
 
-        // User has access - show validation form
         validationForm.classList.remove('hidden');
 
-        // Handle code validation
         codeForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const code = codeInput.value.trim();
@@ -181,7 +186,6 @@ async function initPuntoB() {
             }
         });
 
-        // Copy reward
         copyRewardBtn.addEventListener('click', () => {
             navigator.clipboard.writeText(rewardCode.textContent)
                 .then(() => showMsg('Código copiado.', 'success'))
@@ -194,7 +198,6 @@ async function initPuntoB() {
     }
 }
 
-// ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
     if (isPointA) {
         initPuntoA();

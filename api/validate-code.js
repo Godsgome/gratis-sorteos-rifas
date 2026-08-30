@@ -13,7 +13,7 @@ export default async function handler(req, res) {
         const { codigoA, visitorId, paginaB_id } = req.body;
 
         if (!codigoA || !visitorId || !paginaB_id) {
-            return res.status(400).json({ error: 'Missing required fields' });
+            return res.status(400).json({ error: 'Faltan campos requeridos' });
         }
 
         const code = await db.collection('codes').findOne({
@@ -24,18 +24,27 @@ export default async function handler(req, res) {
         });
 
         if (!code) {
-            return res.status(404).json({ error: 'Invalid or used code' });
+            return res.status(404).json({ error: 'Código inválido o ya utilizado' });
         }
 
+        // Mark as used
         await db.collection('codes').updateOne(
             { _id: code._id },
             { $set: { estado: 'utilizado', usedAt: new Date() } }
         );
 
-        const rewardCode = 'R' + Math.floor(1000 + Math.random() * 9000);
+        // Generate reward code (6-char alphanumeric)
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let rewardCode = '';
+        for (let i = 0; i < 6; i++) {
+            rewardCode += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
 
+        // Save reward
         await db.collection('rewards').insertOne({
-            codigoA, rewardCode, visitorId,
+            codigoA,
+            rewardCode,
+            visitorId,
             paginaB_id: parseInt(paginaB_id),
             createdAt: new Date()
         });
@@ -43,7 +52,6 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, rewardCode });
 
     } catch (error) {
-        console.error('Validate code error:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: error.message || 'Internal server error' });
     }
 }
