@@ -1,8 +1,17 @@
-// api/db.js - Shared MongoDB connection
+// api/db.js - Shared MongoDB connection (lazy)
 import { MongoClient } from 'mongodb';
 
 const uri = process.env.MONGODB_URI;
-const client = new MongoClient(uri);
-const db = client.db('rifas-gratis');
+let client;
+let db;
 
-export default db;
+async function getDb() {
+    if (!db) {
+        client = new MongoClient(uri);
+        await client.connect();
+        db = client.db('rifas-gratis');
+    }
+    return db;
+}
+
+export default { getDb };
