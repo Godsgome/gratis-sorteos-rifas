@@ -15,6 +15,7 @@ body {
     padding: 40px 20px;
 }
 
+/* Punto B: container centrado */
 .container {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
@@ -26,20 +27,43 @@ body {
     text-align: center;
 }
 
+/* Punto A: page-container con columnas */
+.page-container {
+    max-width: 900px;
+    width: 100%;
+}
+
+.columns {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.col {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+}
+
 h1 {
-    font-size: 24px;
+    font-size: 22px;
     margin-bottom: 8px;
 }
 
 h2 {
-    font-size: 18px;
-    margin: 20px 0 10px;
+    font-size: 17px;
+    margin: 16px 0 10px;
 }
 
 p {
     font-size: 14px;
     color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 16px;
+    margin-bottom: 14px;
+    line-height: 1.5;
 }
 
 .status {
@@ -104,7 +128,7 @@ button:disabled {
 }
 
 .code-box span {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: bold;
     letter-spacing: 2px;
     font-family: monospace;
@@ -144,8 +168,8 @@ button:disabled {
 }
 
 .donation-qr {
-    width: 180px;
-    height: 180px;
+    width: 160px;
+    height: 160px;
     border-radius: 12px;
     background: #fff;
     padding: 8px;
@@ -153,8 +177,23 @@ button:disabled {
     display: block;
 }
 
-.donation-section {
-    margin-bottom: 20px;
+.donation-phrase {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 12px 0;
+    padding: 12px;
+    border-left: 3px solid #667eea;
+    background: rgba(102, 126, 234, 0.08);
+    border-radius: 0 8px 8px 0;
+    text-align: left;
+}
+
+.donation-sub {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 14px;
 }
 
 .btn-link {
@@ -176,6 +215,69 @@ button:disabled {
 
 .btn-link:active {
     transform: scale(0.97);
+}
+
+.btn-link-secondary {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.btn-link-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* TikTok button */
+.tiktok-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tiktok-instructions {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.tiktok-instructions strong {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.btn-tiktok {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: transform 0.2s, background 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-tiktok:hover {
+    transform: translateY(-1px);
+    background: #1a1a1a;
+}
+
+.btn-tiktok:active {
+    transform: scale(0.97);
+}
+
+.tiktok-icon {
+    flex-shrink: 0;
 }
 
 input[type="text"] {
@@ -226,45 +328,22 @@ input[type="text"]::placeholder {
     display: none !important;
 }
 
-@media (max-width: 480px) {
+.mt-12 {
+    margin-top: 12px;
+}
+
+/* Mobile: columnas apiladas */
+@media (max-width: 700px) {
     body {
         padding: 20px 12px;
     }
 
-    .container {
+    .columns {
+        flex-direction: column;
+    }
+
+    .col {
         padding: 24px 16px;
-    }
-
-    h1 {
-        font-size: 20px;
-    }
-
-    h2 {
-        font-size: 16px;
-    }
-
-    .donation-qr {
-        width: 160px;
-        height: 160px;
-    }
-
-    .code-box span {
-        font-size: 20px;
-    }
-
-    .wallet-addr {
-        font-size: 10px !important;
-    }
-
-    input[type="text"] {
-        font-size: 20px;
-        width: 120px;
-    }
-}
-
-@media (max-width: 360px) {
-    .container {
-        padding: 20px 12px;
     }
 
     .donation-qr {
@@ -272,8 +351,23 @@ input[type="text"]::placeholder {
         height: 140px;
     }
 
+    .code-box span {
+        font-size: 18px;
+    }
+
+    .wallet-addr {
+        font-size: 10px !important;
+    }
+}
+
+@media (max-width: 360px) {
+    .container,
+    .col {
+        padding: 16px 10px;
+    }
+
     button {
-        padding: 12px 24px;
+        padding: 12px 20px;
         font-size: 15px;
     }
 

@@ -3,6 +3,24 @@ const API_URL = 'https://gratis-sorteos-rifas.vercel.app';
 const WALLET_ADDRESS = '0xA985Fac65c391b7685BB25D0aEF80EE228d8aD1D';
 const QR_API = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(WALLET_ADDRESS)}`;
 
+const DONATION_PHRASES = [
+    'Pequeñas donaciones generan grandes cambios. Tu apoyo nos mantiene en pie.',
+    'Gracias a donantes como tú, este proyecto sigue vivo y mejorando cada día.',
+    'No importa el monto, cada contribución hace la diferencia.',
+    'Este proyecto es gratuito y funciona gracias a tu generosidad.',
+    'Entre todos construimos algo mejor. ¡Tu donación cuenta!',
+    'La comunidad nos hace fuertes. Tu apoyo es el motor de este proyecto.',
+    'Cada moneda que donas se convierte en mejoras para todos.',
+    'Mantener esto funcionando tiene costos. ¡Ayúdanos a seguir adelante!',
+    'Tu generosidad permite que otros también disfruten de este proyecto.',
+    'Un proyecto sostenido por la comunidad, para la comunidad.',
+    'Si este proyecto te sirvió, considera devolver un poco de lo que recibiste.',
+    'El cambio empieza contigo. Una donación pequeña puede hacer una gran diferencia.',
+    'Gracias por tomarte el tiempo de leer esto. Tu apoyo lo es todo.',
+    'Invertimos tiempo y esfuerzo para que tú solo tengas que disfrutar.',
+    'Cada día trabajamos para mejorar. Tu donación nos ayuda a llegar más lejos.'
+];
+
 let visitorId = null;
 let isPointA = false;
 let isPointB = false;
@@ -33,6 +51,20 @@ async function apiCall(endpoint, data) {
     return response.json();
 }
 
+async function getConfig(name) {
+    try {
+        const response = await fetch(`${API_URL}/api/get-config`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name })
+        });
+        const data = await response.json();
+        return data.value || null;
+    } catch (err) {
+        return null;
+    }
+}
+
 function showMsg(text, type = 'info') {
     const msgEl = document.getElementById('msg');
     if (msgEl) {
@@ -58,6 +90,10 @@ async function initPuntoA() {
     const qrImg = document.getElementById('donation-qr');
     const walletEl = document.getElementById('wallet-address');
     const copyWalletBtn = document.getElementById('copyWalletBtn');
+    const phraseEl = document.getElementById('donation-phrase');
+
+    // Random phrase
+    phraseEl.textContent = DONATION_PHRASES[Math.floor(Math.random() * DONATION_PHRASES.length)];
 
     // QR + Wallet
     qrImg.src = QR_API;
@@ -96,7 +132,6 @@ async function initPuntoA() {
                 showMsg('Código generado!', 'success');
             }
         } catch (err) {
-            console.error('Generate error:', err);
             showMsg('Error al generar código.', 'error');
         }
 
@@ -122,11 +157,11 @@ async function initPuntoB() {
     const codeForm = document.getElementById('codeForm');
     const codeInput = document.getElementById('codeInput');
     const copyRewardBtn = document.getElementById('copyRewardBtn');
-    const linkA = document.getElementById('linkA');
+    const tiktokBtn = document.getElementById('tiktokBtn');
 
     const hash = window.location.hash;
     const match = hash.match(/pag=(\d+)/);
-    
+
     if (!match) {
         loading.classList.add('hidden');
         accessDenied.classList.remove('hidden');
@@ -135,8 +170,18 @@ async function initPuntoB() {
     }
 
     const paginaB_id = match[1];
-    linkA.href = 'index.html';
 
+    // Load TikTok URL
+    const tiktokUrl = await getConfig('tiktok_url');
+    if (tiktokUrl) {
+        tiktokBtn.href = tiktokUrl;
+    } else {
+        tiktokBtn.href = '#';
+        tiktokBtn.style.opacity = '0.5';
+        tiktokBtn.style.pointerEvents = 'none';
+    }
+
+    // Fingerprint
     const fpOk = await initFingerprint();
     if (!fpOk) {
         loading.innerHTML = 'Error al identificar navegador';
@@ -181,7 +226,6 @@ async function initPuntoB() {
                     showMsg('Código validado!', 'success');
                 }
             } catch (err) {
-                console.error('Validate error:', err);
                 showMsg('Error al validar.', 'error');
             }
         });
@@ -193,7 +237,6 @@ async function initPuntoB() {
         });
 
     } catch (err) {
-        console.error('Check access error:', err);
         loading.innerHTML = 'Error de conexión';
     }
 }
